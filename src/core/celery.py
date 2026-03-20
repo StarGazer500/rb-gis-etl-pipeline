@@ -38,7 +38,7 @@ def requeue_unacked_on_startup(sender, **kwargs):
 celery_app.conf.beat_schedule = {
     "etl-pipeline-daily": {
         "task": "etl_pipeline_task",
-        "schedule": crontab(hour=20, minute=0),  # daily at 19:50 UTC (7:50 PM GMT)
+        "schedule": crontab(hour=8, minute=0),  # daily at 08:00 GMT
     },
 }
 
