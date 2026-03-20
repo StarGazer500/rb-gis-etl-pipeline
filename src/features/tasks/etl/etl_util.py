@@ -1,20 +1,11 @@
-from datetime import datetime
-
 from .data_management_util import DataManagement
 from .validation_util import Validation
-from .savepoints_util import SavePoints
 
 
 class Extract_Transform_Load:
 
 
     def load_leased_areas(schema, source_conn, target_conn):
-
-        is_loaded = SavePoints.get_layer_progress(f"{schema}_leased_areas_{datetime.now().date()}")
-        if is_loaded:
-            print(f'{schema} leased_areas  already loaded')
-            return
-
         try:
             query = None
             if schema == 'akwaaba_schema':
@@ -43,45 +34,22 @@ class Extract_Transform_Load:
                 FROM {schema}.leased_areas
                 """
 
-            source_data = DataManagement.execute_spatial_query(
-                conn=source_conn,
-                query=query,
-            )
+            source_data = DataManagement.execute_spatial_query(conn=source_conn, query=query)
 
             if source_data.empty:
                 print("No data found")
                 return
 
             source_data = Validation.validate_and_fix_geometries(source_data)
-
-            DataManagement.save_spatial_data_to_postgres(
-                conn=target_conn,
-                data=source_data,
-                table_name='leased_areas',
-                schema=schema
-            )
-
-            SavePoints.save_layer_progress(f"{schema}_leased_areas_{datetime.now().date()}", True)
-
+            DataManagement.save_spatial_data_to_postgres(conn=target_conn, data=source_data, table_name='leased_areas', schema=schema)
             print(f'{schema} leased Areas Loaded Successfully')
 
         except Exception as e:
-
-            SavePoints.save_layer_progress(f"{schema}_leased_areas_{datetime.now().date()}", False)
-
             print(e)
-
             raise
 
 
-
     def load_compartments(schema, source_conn, target_conn):
-
-        is_loaded = SavePoints.get_layer_progress(f"{schema}_compartments_{datetime.now().date()}")
-        if is_loaded:
-            print(f'{schema} compartments  already loaded')
-            return
-
         try:
             query = None
             if schema == "akwaaba_schema":
@@ -108,48 +76,24 @@ class Extract_Transform_Load:
                 FROM {schema}.compartments
                 """
 
-            source_data = DataManagement.execute_spatial_query(
-                conn=source_conn,
-                query=query,
-            )
+            source_data = DataManagement.execute_spatial_query(conn=source_conn, query=query)
 
             if source_data.empty:
                 print("No data found")
                 return
 
             source_data = Validation.validate_and_fix_geometries(source_data)
-
-            DataManagement.save_spatial_data_to_postgres(
-                conn=target_conn,
-                data=source_data,
-                table_name='compartments',
-                schema=schema
-            )
-
-            SavePoints.save_layer_progress(f"{schema}_compartments_{datetime.now().date()}", True)
-
+            DataManagement.save_spatial_data_to_postgres(conn=target_conn, data=source_data, table_name='compartments', schema=schema)
             print(f'{schema} compartments Loaded Successfully')
 
         except Exception as e:
-
-            SavePoints.save_layer_progress(f"{schema}_compartments_{datetime.now().date()}", False)
-
             print(e)
-
             raise
 
 
-
     def load_subcompartments(schema, source_conn, target_conn):
-
-        is_loaded = SavePoints.get_layer_progress(f"{schema}_subcompartments_{datetime.now().date()}")
-        if is_loaded:
-            print(f'{schema} subcompartments  already loaded')
-            return
-
         try:
             query = None
-
             if schema == 'buffalo_schema':
                 query = f"""
                 SELECT
@@ -182,45 +126,22 @@ class Extract_Transform_Load:
                 FROM {schema}.subcompartments
                 """
 
-            source_data = DataManagement.execute_spatial_query(
-                conn=source_conn,
-                query=query,
-            )
+            source_data = DataManagement.execute_spatial_query(conn=source_conn, query=query)
 
             if source_data.empty:
                 print("No data found")
                 return
 
             source_data = Validation.validate_and_fix_geometries(source_data)
-
-            DataManagement.save_spatial_data_to_postgres(
-                conn=target_conn,
-                data=source_data,
-                table_name='subcompartments',
-                schema=schema
-            )
-
-            SavePoints.save_layer_progress(f"{schema}_subcompartments_{datetime.now().date()}", True)
-
+            DataManagement.save_spatial_data_to_postgres(conn=target_conn, data=source_data, table_name='subcompartments', schema=schema)
             print(f'{schema} Subcompartments Loaded Successfully')
 
         except Exception as e:
-
-            SavePoints.save_layer_progress(f"{schema}_subcompartments_{datetime.now().date()}", False)
-
             print(e)
-
             raise
 
 
-
     def load_unplantable_areas(schema, source_conn, target_conn):
-
-        is_loaded = SavePoints.get_layer_progress(f"{schema}_unplantable_areas_{datetime.now().date()}")
-        if is_loaded:
-            print(f'{schema} unplantable_areas  already loaded')
-            return
-
         try:
             query = f"""
             SELECT
@@ -231,45 +152,22 @@ class Extract_Transform_Load:
               damage_type
             FROM {schema}.unplantable_areas
             """
-            source_data = DataManagement.execute_spatial_query(
-                conn=source_conn,
-                query=query,
-            )
+            source_data = DataManagement.execute_spatial_query(conn=source_conn, query=query)
 
             if source_data.empty:
                 print("No data found")
                 return
 
             source_data = Validation.validate_and_fix_geometries(source_data)
-
-            DataManagement.save_spatial_data_to_postgres(
-                conn=target_conn,
-                data=source_data,
-                table_name='unplantable_areas',
-                schema=schema
-            )
-
-            SavePoints.save_layer_progress(f"{schema}_unplantable_areas_{datetime.now().date()}", True)
-
+            DataManagement.save_spatial_data_to_postgres(conn=target_conn, data=source_data, table_name='unplantable_areas', schema=schema)
             print(f'{schema} Unplantable Areas Loaded Successfully')
 
         except Exception as e:
-
-            SavePoints.save_layer_progress(f"{schema}_unplantable_areas_{datetime.now().date()}", False)
-
             print(e)
-
             raise
 
 
-
     def load_field_mapped_farms(schema, source_conn, target_conn):
-
-        is_loaded = SavePoints.get_layer_progress(f"{schema}_field_mapped_farms_{datetime.now().date()}")
-        if is_loaded:
-            print(f'{schema} field_mapped_farms  already loaded')
-            return
-
         try:
             query = f"""
             SELECT
@@ -281,45 +179,22 @@ class Extract_Transform_Load:
               mapped_by
             FROM {schema}.field_mapped_farms
             """
-            source_data = DataManagement.execute_spatial_query(
-                conn=source_conn,
-                query=query,
-            )
+            source_data = DataManagement.execute_spatial_query(conn=source_conn, query=query)
 
             if source_data.empty:
                 print("No data found")
                 return
 
             source_data = Validation.validate_and_fix_geometries(source_data)
-
-            DataManagement.save_spatial_data_to_postgres(
-                conn=target_conn,
-                data=source_data,
-                table_name='field_mapped_farms',
-                schema=schema
-            )
-
-            SavePoints.save_layer_progress(f"{schema}_field_mapped_farms_{datetime.now().date()}", True)
-
+            DataManagement.save_spatial_data_to_postgres(conn=target_conn, data=source_data, table_name='field_mapped_farms', schema=schema)
             print(f'{schema} Field Mapped Farms Loaded Successfully')
 
         except Exception as e:
-
-            SavePoints.save_layer_progress(f"{schema}_field_mapped_farms_{datetime.now().date()}", False)
-
             print(e)
-
             raise
 
 
-
     def load_intercropped_farms(schema, source_conn, target_conn):
-
-        is_loaded = SavePoints.get_layer_progress(f"{schema}_intercropped_farms_{datetime.now().date()}")
-        if is_loaded:
-            print(f'{schema} intercropped_farms  already loaded')
-            return
-
         try:
             query = f"""
             SELECT
@@ -334,45 +209,22 @@ class Extract_Transform_Load:
               signed_intercrop_agmt_area_ha
             FROM {schema}.intercropped_farms
             """
-            source_data = DataManagement.execute_spatial_query(
-                conn=source_conn,
-                query=query,
-            )
+            source_data = DataManagement.execute_spatial_query(conn=source_conn, query=query)
 
             if source_data.empty:
                 print("No data found")
                 return
 
             source_data = Validation.validate_and_fix_geometries(source_data)
-
-            DataManagement.save_spatial_data_to_postgres(
-                conn=target_conn,
-                data=source_data,
-                table_name='intercropped_farms',
-                schema=schema
-            )
-
-            SavePoints.save_layer_progress(f"{schema}_intercropped_farms_{datetime.now().date()}", True)
-
+            DataManagement.save_spatial_data_to_postgres(conn=target_conn, data=source_data, table_name='intercropped_farms', schema=schema)
             print(f'{schema} Intercropped Farms Loaded Successfully')
 
         except Exception as e:
-
-            SavePoints.save_layer_progress(f"{schema}_intercropped_farms_{datetime.now().date()}", False)
-
             print(e)
-
             raise
 
 
-
     def load_rb_roads(schema, source_conn, target_conn):
-
-        is_loaded = SavePoints.get_layer_progress(f"{schema}_rb_roads_{datetime.now().date()}")
-        if is_loaded:
-            print(f'{schema} rb_roads  already loaded')
-            return
-
         try:
             query = f"""
             SELECT
@@ -385,45 +237,22 @@ class Extract_Transform_Load:
               date_created
             FROM {schema}.rb_roads
             """
-            source_data = DataManagement.execute_spatial_query(
-                conn=source_conn,
-                query=query,
-            )
+            source_data = DataManagement.execute_spatial_query(conn=source_conn, query=query)
 
             if source_data.empty:
                 print("No data found")
                 return
 
             source_data = Validation.validate_and_fix_geometries(source_data)
-
-            DataManagement.save_spatial_data_to_postgres(
-                conn=target_conn,
-                data=source_data,
-                table_name='rb_roads',
-                schema=schema
-            )
-
-            SavePoints.save_layer_progress(f"{schema}_rb_roads_{datetime.now().date()}", True)
-
+            DataManagement.save_spatial_data_to_postgres(conn=target_conn, data=source_data, table_name='rb_roads', schema=schema)
             print(f'{schema} Roads Loaded Successfully')
 
         except Exception as e:
-
-            SavePoints.save_layer_progress(f"{schema}_rb_roads_{datetime.now().date()}", False)
-
             print(e)
-
             raise
 
 
-
     def load_rb_assigned_psps(schema, source_conn, target_conn):
-
-        is_loaded = SavePoints.get_layer_progress(f"{schema}_assigned_psps_{datetime.now().date()}")
-        if is_loaded:
-            print(f'{schema} assigned_psps  already loaded')
-            return
-
         try:
             query = f"""
             SELECT
@@ -434,45 +263,22 @@ class Extract_Transform_Load:
               generated_by
             FROM {schema}.assigned_psps
             """
-            source_data = DataManagement.execute_spatial_query(
-                conn=source_conn,
-                query=query,
-            )
+            source_data = DataManagement.execute_spatial_query(conn=source_conn, query=query)
 
             if source_data.empty:
                 print("No data found")
                 return
 
             source_data = Validation.validate_and_fix_geometries(source_data)
-
-            DataManagement.save_spatial_data_to_postgres(
-                conn=target_conn,
-                data=source_data,
-                table_name='assigned_psps',
-                schema=schema
-            )
-
-            SavePoints.save_layer_progress(f"{schema}_assigned_psps_{datetime.now().date()}", True)
-
+            DataManagement.save_spatial_data_to_postgres(conn=target_conn, data=source_data, table_name='assigned_psps', schema=schema)
             print(f'{schema} Assigned Psps Loaded Successfully')
 
         except Exception as e:
-
-            SavePoints.save_layer_progress(f"{schema}_assigned_psps_{datetime.now().date()}", False)
-
             print(e)
-
             raise
 
 
-
     def load_rb_completed_psps(schema, source_conn, target_conn):
-
-        is_loaded = SavePoints.get_layer_progress(f"{schema}_completed_psps_{datetime.now().date()}")
-        if is_loaded:
-            print(f'{schema} completed_psps  already loaded')
-            return
-
         try:
             query = f"""
             SELECT
@@ -483,32 +289,16 @@ class Extract_Transform_Load:
               psp_cardinal_location
             FROM {schema}.completed_psps
             """
-            source_data = DataManagement.execute_spatial_query(
-                conn=source_conn,
-                query=query,
-            )
+            source_data = DataManagement.execute_spatial_query(conn=source_conn, query=query)
 
             if source_data.empty:
                 print("No data found")
                 return
 
             source_data = Validation.validate_and_fix_geometries(source_data)
-
-            DataManagement.save_spatial_data_to_postgres(
-                conn=target_conn,
-                data=source_data,
-                table_name='completed_psps',
-                schema=schema
-            )
-
-            SavePoints.save_layer_progress(f"{schema}_completed_psps_{datetime.now().date()}", True)
-
+            DataManagement.save_spatial_data_to_postgres(conn=target_conn, data=source_data, table_name='completed_psps', schema=schema)
             print(f'{schema} Completed Psps Loaded Successfully')
 
         except Exception as e:
-
-            SavePoints.save_layer_progress(f"{schema}_completed_psps_{datetime.now().date()}", False)
-
             print(e)
-
             raise

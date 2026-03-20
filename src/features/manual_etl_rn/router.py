@@ -1,4 +1,3 @@
-from datetime import datetime
 from enum import Enum
 
 from celery import chord, group
@@ -13,7 +12,6 @@ from src.features.tasks.etl.etl_task import (
     SCHEMA_LAYERS,
     SOURCE_SESSIONS,
 )
-from src.features.tasks.etl.savepoints_util import SavePoints
 from src.features.tasks.etl.validation_util import Validation
 
 
@@ -39,11 +37,6 @@ def run_etl(project: Project):
 
     if not Validation.validate_schema(val_conn, source_conn, schema):
         raise HTTPException(status_code=400, detail=f"Schema validation failed for {project.value}")
-
-    # Clear today's savepoints for this schema so all layers rerun fresh
-    today = datetime.now().date()
-    for layer in SCHEMA_LAYERS[schema]:
-        SavePoints.save_layer_progress(f"{schema}_{layer.replace('load_', '')}_{today}", False)
 
     job = chord(
         group(
