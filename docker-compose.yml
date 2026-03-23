@@ -44,6 +44,8 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+    depends_on:
+      - backend
 
   celery-beat:
     image: backend-main:latest
@@ -56,6 +58,8 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+    depends_on:
+      - backend
 
   nginx:
     image: nginx:latest
