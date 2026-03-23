@@ -8,8 +8,7 @@ celery_app = Celery(
     broker=settings.REDIS_URL,
     backend=settings.REDIS_URL,
     include=[
-        "src.features.tasks.drone_image_tiling_task",
-        "src.features.tasks.etl.etl_task",
+        "src.features.etl.task",
     ],
 )
 

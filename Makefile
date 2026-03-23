@@ -29,4 +29,4 @@ docker-worker-logs:
 	docker compose logs -f worker
 
 worker:
-	celery -A src.worker.celery_app.celery_app worker --loglevel=info --concurrency=4
+	celery -A src.core.celery.celery_app worker --loglevel=info --concurrency=4

@@ -1,4 +1,6 @@
-from .data_management_util import DataManagement
+from src.features.etl.utils.data_management_util import DataManagement
+
+
 
 
 class Validation:

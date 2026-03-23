@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 # from src.features.jobs.router import router as jobs_router
-from src.features.manual_etl_rn.router import router as etl_router
+from src.features.etl.router import router as etl_router
 
 
 @asynccontextmanager

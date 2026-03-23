@@ -1,5 +1,5 @@
-from .data_management_util import DataManagement
-from .validation_util import Validation
+from src.features.etl.utils.data_management_util import DataManagement
+from src.features.etl.utils.validation_util import Validation
 
 
 class Extract_Transform_Load:

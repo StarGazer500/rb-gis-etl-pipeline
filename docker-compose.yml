@@ -4,8 +4,8 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    expose:
-      - "6379"
+    ports:
+      - "6379:6379"
     volumes:
       - redis_data:/data        # persists the job queue across restarts
     command: redis-server --appendonly yes
@@ -20,7 +20,8 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.mainapp
+      dockerfile: Dockerfile
+    image: backend-main:latest
     expose:
       - "8080"
     env_file:
@@ -33,10 +34,8 @@ services:
       - app-network
 
   celery:
-    build:
-      context: .
-      dockerfile: Dockerfile.celery
-
+    image: backend-main:latest
+    command: celery -A src.core.celery.celery_app worker --loglevel=info --concurrency=4
     env_file:
       - .env
     depends_on:
@@ -47,9 +46,7 @@ services:
       - app-network
 
   celery-beat:
-    build:
-      context: .
-      dockerfile: Dockerfile.celery
+    image: backend-main:latest
     command: celery -A src.core.celery.celery_app beat --loglevel=info
     env_file:
       - .env
