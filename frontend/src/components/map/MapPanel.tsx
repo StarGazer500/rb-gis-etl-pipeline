@@ -4,7 +4,7 @@ import L from 'leaflet'
 import { BASE_MAPS, type BaseMapKey } from './baseMaps'
 export interface GeoJSONFeatureCollection {
   type: 'FeatureCollection'
-  features: { type: 'Feature'; geometry: unknown; properties: Record<string, unknown> }[]
+  features: { type: 'Feature'; geometry: unknown; properties: unknown }[]
 }
 
 // ── Exported types ────────────────────────────────────────────────────────────

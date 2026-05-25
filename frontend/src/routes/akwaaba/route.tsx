@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import Header from '../../components/shared/Header'
 import SideBar from '../../components/shared/SideBar'
+// @ts-ignore – Footer is temporarily commented out but kept for future use
 import Footer from '../../components/shared/Footer'
 
 export const Route = createFileRoute('/akwaaba')({
