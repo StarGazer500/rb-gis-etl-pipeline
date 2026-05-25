@@ -128,8 +128,8 @@ const sections: NavSection[] = [
     title: 'Project Oview',
     icon: <MapIcon />,
     items: [
-      { label: 'Phase 1', icon: null },
-      { label: 'Phase 2', icon: null },
+      // { label: 'Phase 1', icon: null },
+      // { label: 'Phase 2', icon: null },
     ],
   },
 //   {

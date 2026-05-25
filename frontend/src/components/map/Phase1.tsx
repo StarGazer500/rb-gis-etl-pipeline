@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
 import MapPanel from './MapPanel'
 import type { LayerGroup } from './MapPanel'
-import { useSubcompartments } from '../../api/akwaaba'
+import { useSubcompartments, useNurseryFence, useBibianiCentre, useOfficeLocation, usePrimaryRoads } from '../../api/akwaaba'
+import type { OverlayLayer } from './MapPanel'
 
 const PALETTE = [
   '#7ab060', '#e87a4a', '#e8c84a', '#4a90d9', '#e84aaa',
@@ -31,8 +32,18 @@ interface Phase1Props {
 
 export default function Phase1({ collapsed, onCollapse, bothVisible }: Phase1Props) {
   const { data, isLoading, isError } = useSubcompartments()
-  // Empty string = no active categorisation (features shown in default colour)
+  const { data: nurseryData }  = useNurseryFence()
+  const { data: bibianiData }  = useBibianiCentre()
+  const { data: officeData }   = useOfficeLocation()
+  const { data: roadsData }    = usePrimaryRoads()
   const [colorField, setColorField] = useState<string>('')
+
+  const overlayLayers: OverlayLayer[] = [
+    { id: 'nursery-fence',   label: 'Nursery Fence',   data: nurseryData ?? null, type: 'polygon', color: '#f0c040', labelField: 'name' },
+    { id: 'bibiani-centre',  label: 'Bibiani Centre',  data: bibianiData ?? null, type: 'point',   color: '#4a90d9' },
+    { id: 'office-location', label: 'Office Location', data: officeData  ?? null, type: 'point',   color: '#e84a4a' },
+    { id: 'primary-roads',   label: 'Primary Roads',   data: roadsData   ?? null, type: 'line',    color: '#e8a030' },
+  ]
 
   const layerGroups = useMemo<LayerGroup[]>(() => {
     if (!data) return []
@@ -78,6 +89,7 @@ export default function Phase1({ collapsed, onCollapse, bothVisible }: Phase1Pro
       layerGroups={layerGroups}
       colorField={colorField}
       onColorFieldChange={handleColorFieldChange}
+      overlayLayers={overlayLayers}
     />
   )
 }

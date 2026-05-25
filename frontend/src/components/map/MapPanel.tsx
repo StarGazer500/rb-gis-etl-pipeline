@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, GeoJSON as GeoJSONLayer, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { BASE_MAPS, type BaseMapKey } from './baseMaps'
-import type { SubcompartmentFeatureCollection } from '../../api/akwaaba'
+export interface GeoJSONFeatureCollection {
+  type: 'FeatureCollection'
+  features: { type: 'Feature'; geometry: unknown; properties: Record<string, unknown> }[]
+}
 
 // ── Exported types ────────────────────────────────────────────────────────────
 
@@ -26,6 +29,15 @@ export interface LayerGroup {
   values: LayerValue[]
 }
 
+export interface OverlayLayer {
+  id: string
+  label: string
+  data: GeoJSONFeatureCollection | null
+  type: 'point' | 'polygon' | 'line'
+  color: string
+  labelField?: string
+}
+
 export interface MapPanelProps {
   title: string
   dotColor: string
@@ -37,13 +49,13 @@ export interface MapPanelProps {
   borderRight?: boolean
   center?: [number, number]
   zoom?: number
-  // GeoJSON / dynamic layers (Phase 1)
   isLoading?: boolean
   isError?: boolean
-  geoJsonData?: SubcompartmentFeatureCollection | null
+  geoJsonData?: GeoJSONFeatureCollection | null
   layerGroups?: LayerGroup[]
   colorField?: string
   onColorFieldChange?: (field: string) => void
+  overlayLayers?: OverlayLayer[]
 }
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
@@ -86,7 +98,7 @@ function MapController({
   data,
 }: {
   bothVisible: boolean
-  data: SubcompartmentFeatureCollection | null
+  data: GeoJSONFeatureCollection | null
 }) {
   const map = useMap()
 
@@ -126,6 +138,7 @@ export default function MapPanel({
   layerGroups,
   colorField,
   onColorFieldChange,
+  overlayLayers = [],
 }: MapPanelProps) {
   const [layers, setLayers] = useState<Layer[]>(initialLayers)
   const [activeBase, setActiveBase] = useState<BaseMapKey>('Satellite')
@@ -190,6 +203,62 @@ export default function MapPanel({
                 }
               }}
             />
+          )}
+
+          {overlayLayers.map((ol) =>
+            ol.data ? (
+              <GeoJSONLayer
+                key={ol.id}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                data={ol.data as any}
+                style={() =>
+                  ol.type === 'line'
+                    ? { color: ol.color, weight: 2.5, opacity: 0.85, fillOpacity: 0 }
+                    : { fillColor: ol.color, color: '#fff', weight: 2, fillOpacity: 0.7 }
+                }
+                onEachFeature={
+                  ol.labelField
+                    ? (feature, layer) => {
+                        const val = (feature.properties as Record<string, unknown>)?.[ol.labelField!]
+                        if (val) {
+                          layer.bindTooltip(String(val), {
+                            permanent: true,
+                            direction: 'center',
+                            className: 'overlay-label',
+                          })
+                        }
+                      }
+                    : undefined
+                }
+                pointToLayer={
+                  ol.type === 'point'
+                    ? (_feat, latlng) =>
+                        L.marker(latlng, {
+                          icon: L.divIcon({
+                            className: '',
+                            iconAnchor: [14, 14],
+                            html: `
+                              <div style="text-align:center;width:28px;">
+                                <div style="
+                                  width:28px;height:28px;border-radius:50%;
+                                  background:${ol.color};border:3px solid #fff;
+                                  box-shadow:0 1px 5px rgba(0,0,0,0.5);
+                                "></div>
+                                <div style="
+                                  margin-top:3px;font-size:11px;font-weight:700;
+                                  color:#1a3a0a;white-space:nowrap;
+                                  text-shadow:1px 1px 0 #fff,-1px -1px 0 #fff,
+                                              1px -1px 0 #fff,-1px 1px 0 #fff;
+                                  transform:translateX(calc(-50% + 14px));
+                                  display:inline-block;
+                                ">${ol.label}</div>
+                              </div>`,
+                          }),
+                        })
+                    : undefined
+                }
+              />
+            ) : null,
           )}
 
           <MapController bothVisible={bothVisible} data={geoJsonData ?? null} />
@@ -315,6 +384,7 @@ export default function MapPanel({
           )}
         </div>
       </div>
+
     </div>
   )
 }

@@ -13,7 +13,7 @@ export const Route = createFileRoute('/akwaaba')({
           <Outlet />
         </main>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   ),
 })
