@@ -1,12 +1,18 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
+import BuffaloMapView from '../../components/buffalo/MapView'
+import BuffaloChartStrip from '../../components/buffalo/ChartStrip'
+
+function BuffaloDashboard() {
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+      <div className="flex-1 flex overflow-hidden min-h-0">
+        <BuffaloMapView />
+      </div>
+      <BuffaloChartStrip />
+    </div>
+  )
+}
 
 export const Route = createFileRoute('/buffalo/')({
-  component: () => (
-    <div className="min-h-screen bg-[#0a1f05] flex flex-col items-center justify-center gap-4">
-      <p className="text-[#7ab060] text-lg font-medium">Buffalo dashboard coming soon</p>
-      <Link to="/" className="text-[#4a8c2a] text-sm hover:text-white transition-colors">
-        ← Back to projects
-      </Link>
-    </div>
-  ),
+  component: BuffaloDashboard,
 })

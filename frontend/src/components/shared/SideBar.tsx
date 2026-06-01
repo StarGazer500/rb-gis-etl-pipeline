@@ -4,8 +4,8 @@ import { useUIStore } from '../../store/uiStore'
 
 const projects = [
   { id: 'akwaaba', label: 'Akwaaba', dot: '#7ab060', active: true },
-  { id: 'buffalo', label: 'Buffalo',  dot: '#e87a4a', active: false },
-  { id: 'colobus', label: 'Colobus',  dot: '#e8a84a', active: false },
+  { id: 'buffalo', label: 'Buffalo',  dot: '#e87a4a', active: true },
+  { id: 'colobus', label: 'Colobus',  dot: '#e8a84a', active: true },
 ]
 
 function ProjectSwitcher({ collapsed }: { collapsed: boolean }) {
@@ -125,12 +125,9 @@ const ChevronDown = () => (
 
 const sections: NavSection[] = [
   {
-    title: 'Project Oview',
+    title: 'Project Overview',
     icon: <MapIcon />,
-    items: [
-      // { label: 'Phase 1', icon: null },
-      // { label: 'Phase 2', icon: null },
-    ],
+    items: [],
   },
 //   {
 //     title: 'Data Management',
@@ -153,13 +150,23 @@ const sections: NavSection[] = [
 
 export default function SideBar() {
   const collapsed = useUIStore((s) => s.sidebarCollapsed)
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    'GIS Maps': true,
-  })
-  const [activeItem, setActiveItem] = useState('Phase 1')
+  const navigate = useNavigate()
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const currentId = pathname.split('/')[1] || 'akwaaba'
 
-  const toggleSection = (title: string) => {
-    setOpenSections((prev) => ({ ...prev, [title]: !prev[title] }))
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    'Project Overview': true,
+  })
+  const [activeItem, setActiveItem] = useState('')
+
+  const isProjectOverview = pathname === `/${currentId}` || pathname === `/${currentId}/`
+
+  const handleSectionClick = (section: NavSection) => {
+    if (section.items.length === 0) {
+      navigate({ to: `/${currentId}` })
+    } else {
+      setOpenSections((prev) => ({ ...prev, [section.title]: !prev[section.title] }))
+    }
   }
 
   return (
@@ -174,50 +181,59 @@ export default function SideBar() {
 
       {/* Nav sections */}
       <nav className="flex-1 overflow-y-auto py-3 overflow-x-hidden">
-        {sections.map((section) => (
-          <div key={section.title} className="mb-1">
-            {/* Section header */}
-            <button
-              onClick={() => toggleSection(section.title)}
-              className="w-full flex items-center gap-3 px-3 py-2 text-[#a8c896] hover:text-white hover:bg-[#2d5a18] transition-colors rounded-sm group"
-            >
-              <span className="shrink-0 text-[#7ab060] group-hover:text-white transition-colors">
-                {section.icon}
-              </span>
-              {!collapsed && (
-                <>
-                  <span className="flex-1 text-left text-xs font-semibold uppercase tracking-wider truncate">
-                    {section.title}
-                  </span>
-                  <span className="shrink-0 transition-transform duration-200" style={{ transform: openSections[section.title] ? 'rotate(0deg)' : 'rotate(-90deg)' }}>
-                    <ChevronDown />
-                  </span>
-                </>
-              )}
-            </button>
+        {sections.map((section) => {
+          const isActive = section.title === 'Project Overview' && isProjectOverview
+          return (
+            <div key={section.title} className="mb-1">
+              {/* Section header */}
+              <button
+                onClick={() => handleSectionClick(section)}
+                className={`w-full flex items-center gap-3 px-3 py-2 transition-colors rounded-sm group ${
+                  isActive
+                    ? 'bg-[#3d6b24] text-white'
+                    : 'text-[#a8c896] hover:text-white hover:bg-[#2d5a18]'
+                }`}
+              >
+                <span className={`shrink-0 transition-colors ${isActive ? 'text-white' : 'text-[#7ab060] group-hover:text-white'}`}>
+                  {section.icon}
+                </span>
+                {!collapsed && (
+                  <>
+                    <span className="flex-1 text-left text-xs font-semibold uppercase tracking-wider truncate">
+                      {section.title}
+                    </span>
+                    {section.items.length > 0 && (
+                      <span className="shrink-0 transition-transform duration-200" style={{ transform: openSections[section.title] ? 'rotate(0deg)' : 'rotate(-90deg)' }}>
+                        <ChevronDown />
+                      </span>
+                    )}
+                  </>
+                )}
+              </button>
 
-            {/* Section items */}
-            {!collapsed && openSections[section.title] && (
-              <div className="ml-4 border-l border-[#2d5a18] pl-2 mb-1">
-                {section.items.map((item) => (
-                  <button
-                    key={item.label}
-                    onClick={() => setActiveItem(item.label)}
-                    className={`
-                      w-full text-left px-3 py-1.5 text-sm rounded-sm transition-colors truncate
-                      ${activeItem === item.label
-                        ? 'text-white bg-[#3d6b24] font-medium'
-                        : 'text-[#8ab878] hover:text-white hover:bg-[#2d5a18]'
-                      }
-                    `}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+              {/* Section items */}
+              {!collapsed && openSections[section.title] && section.items.length > 0 && (
+                <div className="ml-4 border-l border-[#2d5a18] pl-2 mb-1">
+                  {section.items.map((item) => (
+                    <button
+                      key={item.label}
+                      onClick={() => setActiveItem(item.label)}
+                      className={`
+                        w-full text-left px-3 py-1.5 text-sm rounded-sm transition-colors truncate
+                        ${activeItem === item.label
+                          ? 'text-white bg-[#3d6b24] font-medium'
+                          : 'text-[#8ab878] hover:text-white hover:bg-[#2d5a18]'
+                        }
+                      `}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
       </nav>
 
       {/* Bottom actions */}

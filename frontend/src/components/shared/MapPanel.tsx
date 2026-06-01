@@ -56,6 +56,7 @@ export interface MapPanelProps {
   colorField?: string
   onColorFieldChange?: (field: string) => void
   overlayLayers?: OverlayLayer[]
+  showCollapse?: boolean
 }
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
@@ -106,7 +107,7 @@ function MapController({
   useEffect(() => {
     if (!data?.features.length) return
     const bounds = L.geoJSON(data as unknown as Parameters<typeof L.geoJSON>[0]).getBounds()
-    if (bounds.isValid()) map.fitBounds(bounds, { padding: [20, 20] })
+    if (bounds.isValid()) map.fitBounds(bounds, { padding: [5, 5] })
   }, [data, map])
 
   // Invalidate size after panel resize — rAF ensures the browser has finished
@@ -131,7 +132,7 @@ export default function MapPanel({
   bothVisible = false,
   borderRight = false,
   center = [7.9465, -1.0232],
-  zoom = 7,
+  zoom = 10,
   isLoading = false,
   isError = false,
   geoJsonData = null,
@@ -139,6 +140,7 @@ export default function MapPanel({
   colorField,
   onColorFieldChange,
   overlayLayers = [],
+  showCollapse = true,
 }: MapPanelProps) {
   const [layers, setLayers] = useState<Layer[]>(initialLayers)
   const [activeBase, setActiveBase] = useState<BaseMapKey>('Satellite')
@@ -163,14 +165,16 @@ export default function MapPanel({
           <span className="w-2 h-2 rounded-full" style={{ backgroundColor: dotColor }} />
           <span className="text-white text-sm font-medium">{title}</span>
         </div>
-        <button
-          onClick={onCollapse}
-          className="text-[#a8c896] hover:text-white transition-colors flex items-center gap-1 text-xs"
-        >
-          {collapseDirection === 'left' && <CollapseArrow direction="left" />}
-          Collapse
-          {collapseDirection === 'right' && <CollapseArrow direction="right" />}
-        </button>
+        {showCollapse && (
+          <button
+            onClick={onCollapse}
+            className="text-[#a8c896] hover:text-white transition-colors flex items-center gap-1 text-xs"
+          >
+            {collapseDirection === 'left' && <CollapseArrow direction="left" />}
+            Collapse
+            {collapseDirection === 'right' && <CollapseArrow direction="right" />}
+          </button>
+        )}
       </div>
 
       {/* Map */}

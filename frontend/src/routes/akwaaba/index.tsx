@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import Phase1 from '../../components/map/Phase1'
-import Phase2 from '../../components/map/Phase2'
-import CombinedView from '../../components/map/CombinedView'
-import ChartStrip from '../../components/map/ChartStrip'
+import Phase1 from '../../components/akwaaba/Phase1'
+import Phase2 from '../../components/akwaaba/Phase2'
+import CombinedView from '../../components/akwaaba/CombinedView'
+import ChartStrip from '../../components/akwaaba/ChartStrip'
 
 type PhaseView = 'both' | 'phase1' | 'phase2' | 'combined'
 

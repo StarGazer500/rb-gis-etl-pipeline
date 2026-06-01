@@ -9,12 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ColobusRouteRouteImport } from './routes/colobus/route'
+import { Route as BuffaloRouteRouteImport } from './routes/buffalo/route'
 import { Route as AkwaabaRouteRouteImport } from './routes/akwaaba/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ColobusIndexRouteImport } from './routes/colobus/index'
 import { Route as BuffaloIndexRouteImport } from './routes/buffalo/index'
 import { Route as AkwaabaIndexRouteImport } from './routes/akwaaba/index'
 
+const ColobusRouteRoute = ColobusRouteRouteImport.update({
+  id: '/colobus',
+  path: '/colobus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuffaloRouteRoute = BuffaloRouteRouteImport.update({
+  id: '/buffalo',
+  path: '/buffalo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AkwaabaRouteRoute = AkwaabaRouteRouteImport.update({
   id: '/akwaaba',
   path: '/akwaaba',
@@ -26,14 +38,14 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ColobusIndexRoute = ColobusIndexRouteImport.update({
-  id: '/colobus/',
-  path: '/colobus/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => ColobusRouteRoute,
 } as any)
 const BuffaloIndexRoute = BuffaloIndexRouteImport.update({
-  id: '/buffalo/',
-  path: '/buffalo/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuffaloRouteRoute,
 } as any)
 const AkwaabaIndexRoute = AkwaabaIndexRouteImport.update({
   id: '/',
@@ -44,6 +56,8 @@ const AkwaabaIndexRoute = AkwaabaIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/akwaaba': typeof AkwaabaRouteRouteWithChildren
+  '/buffalo': typeof BuffaloRouteRouteWithChildren
+  '/colobus': typeof ColobusRouteRouteWithChildren
   '/akwaaba/': typeof AkwaabaIndexRoute
   '/buffalo/': typeof BuffaloIndexRoute
   '/colobus/': typeof ColobusIndexRoute
@@ -58,27 +72,58 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/akwaaba': typeof AkwaabaRouteRouteWithChildren
+  '/buffalo': typeof BuffaloRouteRouteWithChildren
+  '/colobus': typeof ColobusRouteRouteWithChildren
   '/akwaaba/': typeof AkwaabaIndexRoute
   '/buffalo/': typeof BuffaloIndexRoute
   '/colobus/': typeof ColobusIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/akwaaba' | '/akwaaba/' | '/buffalo/' | '/colobus/'
+  fullPaths:
+    | '/'
+    | '/akwaaba'
+    | '/buffalo'
+    | '/colobus'
+    | '/akwaaba/'
+    | '/buffalo/'
+    | '/colobus/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/akwaaba' | '/buffalo' | '/colobus'
-  id: '__root__' | '/' | '/akwaaba' | '/akwaaba/' | '/buffalo/' | '/colobus/'
+  id:
+    | '__root__'
+    | '/'
+    | '/akwaaba'
+    | '/buffalo'
+    | '/colobus'
+    | '/akwaaba/'
+    | '/buffalo/'
+    | '/colobus/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AkwaabaRouteRoute: typeof AkwaabaRouteRouteWithChildren
-  BuffaloIndexRoute: typeof BuffaloIndexRoute
-  ColobusIndexRoute: typeof ColobusIndexRoute
+  BuffaloRouteRoute: typeof BuffaloRouteRouteWithChildren
+  ColobusRouteRoute: typeof ColobusRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/colobus': {
+      id: '/colobus'
+      path: '/colobus'
+      fullPath: '/colobus'
+      preLoaderRoute: typeof ColobusRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buffalo': {
+      id: '/buffalo'
+      path: '/buffalo'
+      fullPath: '/buffalo'
+      preLoaderRoute: typeof BuffaloRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/akwaaba': {
       id: '/akwaaba'
       path: '/akwaaba'
@@ -95,17 +140,17 @@ declare module '@tanstack/react-router' {
     }
     '/colobus/': {
       id: '/colobus/'
-      path: '/colobus'
+      path: '/'
       fullPath: '/colobus/'
       preLoaderRoute: typeof ColobusIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ColobusRouteRoute
     }
     '/buffalo/': {
       id: '/buffalo/'
-      path: '/buffalo'
+      path: '/'
       fullPath: '/buffalo/'
       preLoaderRoute: typeof BuffaloIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BuffaloRouteRoute
     }
     '/akwaaba/': {
       id: '/akwaaba/'
@@ -129,11 +174,35 @@ const AkwaabaRouteRouteWithChildren = AkwaabaRouteRoute._addFileChildren(
   AkwaabaRouteRouteChildren,
 )
 
+interface BuffaloRouteRouteChildren {
+  BuffaloIndexRoute: typeof BuffaloIndexRoute
+}
+
+const BuffaloRouteRouteChildren: BuffaloRouteRouteChildren = {
+  BuffaloIndexRoute: BuffaloIndexRoute,
+}
+
+const BuffaloRouteRouteWithChildren = BuffaloRouteRoute._addFileChildren(
+  BuffaloRouteRouteChildren,
+)
+
+interface ColobusRouteRouteChildren {
+  ColobusIndexRoute: typeof ColobusIndexRoute
+}
+
+const ColobusRouteRouteChildren: ColobusRouteRouteChildren = {
+  ColobusIndexRoute: ColobusIndexRoute,
+}
+
+const ColobusRouteRouteWithChildren = ColobusRouteRoute._addFileChildren(
+  ColobusRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AkwaabaRouteRoute: AkwaabaRouteRouteWithChildren,
-  BuffaloIndexRoute: BuffaloIndexRoute,
-  ColobusIndexRoute: ColobusIndexRoute,
+  BuffaloRouteRoute: BuffaloRouteRouteWithChildren,
+  ColobusRouteRoute: ColobusRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

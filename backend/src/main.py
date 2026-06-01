@@ -11,6 +11,8 @@ from contextlib import asynccontextmanager
 from src.core.config import settings
 from src.shared.job.router import router as jobs_router
 from src.features.akwaaba.router import router as akwaaba_router
+from src.features.buffalo.router import router as buffalo_router
+from src.features.colobus.router import router as colobus_router
 
 
 
@@ -38,6 +40,8 @@ app.add_middleware(
 
 app.include_router(jobs_router)
 app.include_router(akwaaba_router)
+app.include_router(buffalo_router)
+app.include_router(colobus_router)
 
 
 

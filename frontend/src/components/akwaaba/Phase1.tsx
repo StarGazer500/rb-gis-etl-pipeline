@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
-import MapPanel from './MapPanel'
-import type { LayerGroup } from './MapPanel'
+import MapPanel from '../shared/MapPanel'
+import type { LayerGroup } from '../shared/MapPanel'
 import { useSubcompartments, useNurseryFence, useBibianiCentre, useOfficeLocation, usePrimaryRoads } from '../../api/akwaaba'
-import type { OverlayLayer } from './MapPanel'
+import type { OverlayLayer } from '../shared/MapPanel'
 
 const PALETTE = [
   '#7ab060', '#e87a4a', '#e8c84a', '#4a90d9', '#e84aaa',

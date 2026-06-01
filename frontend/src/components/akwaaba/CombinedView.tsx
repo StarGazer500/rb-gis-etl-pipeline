@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
 import { MapContainer, TileLayer, GeoJSON as GeoJSONLayer, useMap } from 'react-leaflet'
 import L from 'leaflet'
-import { BASE_MAPS, type BaseMapKey } from './baseMaps'
-import type { GeoJSONFeatureCollection } from './MapPanel'
+import { BASE_MAPS, type BaseMapKey } from '../shared/baseMaps'
+import type { GeoJSONFeatureCollection } from '../shared/MapPanel'
 import {
   useSubcompartments,
   usePhase2,
@@ -109,7 +109,7 @@ function MapFitter({ data }: { data: GeoJSONFeatureCollection | null }) {
   useEffect(() => {
     if (!data?.features.length) return
     const bounds = L.geoJSON(data as unknown as Parameters<typeof L.geoJSON>[0]).getBounds()
-    if (bounds.isValid()) map.fitBounds(bounds, { padding: [20, 20] })
+    if (bounds.isValid()) map.fitBounds(bounds, { padding: [5, 5] })
   }, [data, map])
   return null
 }
