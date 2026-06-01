@@ -15,6 +15,7 @@ const VALUE_LABELS: Record<string, string> = {
 const FIELDS: Array<{ id: string; label: string }> = [
   { id: 'planting_status', label: 'Planting Status' },
   { id: 'planting_type',   label: 'Recipe' },
+  { id: 'treatment_type',  label: 'Treatment' },
 ]
 
 export interface CurrentYearViewProps {

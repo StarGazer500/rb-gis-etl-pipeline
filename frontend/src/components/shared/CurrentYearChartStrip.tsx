@@ -115,8 +115,16 @@ export default function CurrentYearChartStrip({ projectLabel, labelColor, data }
       .map(f => ({ properties: f.properties as Record<string, unknown> }))
   }, [data, maxYear])
 
-  const plantingStatus = useMemo(() => aggregateArea(features, 'planting_status'), [features])
-  const recipe         = useMemo(() => aggregateArea(features, 'planting_type'),   [features])
+  const plantedFeatures = useMemo(
+    () => features.filter(f => String(f.properties.planting_status ?? '').toLowerCase() !== 'not planted'),
+    [features],
+  )
+
+  const plantingStatus  = useMemo(() => aggregateArea(features,        'planting_status'), [features])
+  const plannedRecipe   = useMemo(() => aggregateArea(features,        'planting_type'),   [features])
+  const recipe          = useMemo(() => aggregateArea(plantedFeatures, 'planting_type'),   [plantedFeatures])
+  const plannedTreatment = useMemo(() => aggregateArea(features,        'treatment_type'), [features])
+  const plantedTreatment = useMemo(() => aggregateArea(plantedFeatures, 'treatment_type'), [plantedFeatures])
 
   return (
     <div className="shrink-0 bg-[#0d1f0a] border-t border-[#2d5a18]">
@@ -140,7 +148,10 @@ export default function CurrentYearChartStrip({ projectLabel, labelColor, data }
             </p>
             <div className="flex flex-1 gap-3 min-h-0">
               <MiniChart title="Planting Status" data={plantingStatus} />
-              <MiniChart title="Recipe"          data={recipe} />
+              <MiniChart title="Planned Recipe"    data={plannedRecipe} />
+              <MiniChart title="Planted Recipe"   data={recipe} />
+              {plannedTreatment.length > 0 && <MiniChart title="Planned Treatment" data={plannedTreatment} />}
+              {plantedTreatment.length > 0 && <MiniChart title="Planted Treatment" data={plantedTreatment} />}
             </div>
           </div>
         </div>
