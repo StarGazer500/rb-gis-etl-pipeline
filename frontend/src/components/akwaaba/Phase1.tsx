@@ -10,6 +10,8 @@ const PALETTE = [
   '#4ad96b', '#d9c84a', '#4a6cd9', '#d94a9a',
 ]
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 const VALUE_LABELS: Record<string, string> = {
   'not planted': 'Planned',
 }
@@ -22,6 +24,7 @@ const FIELDS: Array<{ id: string; label: string }> = [
   { id: 'planting_status', label: 'Planting Status' },
   { id: 'planting_type',   label: 'Recipe' },
   { id: 'year_planted',    label: 'Planting Year' },
+  { id: 'age_years',       label: 'Age (planted)' },
 ]
 
 interface Phase1Props {
@@ -38,6 +41,18 @@ export default function Phase1({ collapsed, onCollapse, bothVisible }: Phase1Pro
   const { data: roadsData }    = usePrimaryRoads()
   const [colorField, setColorField] = useState<string>('')
 
+  const processedData = useMemo(() => {
+    if (!data) return null
+    return {
+      ...data,
+      features: data.features.map(f => {
+        const props = f.properties as unknown as Record<string, unknown>
+        const yr = Number(props.year_planted)
+        return { ...f, properties: { ...props, ...(yr > 0 ? { age_years: CURRENT_YEAR - yr } : {}) } }
+      }),
+    }
+  }, [data])
+
   const overlayLayers: OverlayLayer[] = [
     { id: 'nursery-fence',   label: 'Nursery Fence',   data: nurseryData ?? null, type: 'polygon', color: '#f0c040', labelField: 'name' },
     { id: 'bibiani-centre',  label: 'Bibiani Centre',  data: bibianiData ?? null, type: 'point',   color: '#4a90d9' },
@@ -46,16 +61,27 @@ export default function Phase1({ collapsed, onCollapse, bothVisible }: Phase1Pro
   ]
 
   const layerGroups = useMemo<LayerGroup[]>(() => {
-    if (!data) return []
+    if (!processedData) return []
     return FIELDS.map(({ id, label }) => {
       const unique = [
         ...new Set(
-          data.features
-            .map(f => (f.properties as unknown as Record<string, unknown>)[id])
-            .filter((v): v is string | number => v != null)
-            .map(String),
+          processedData.features
+            .map(f => String((f.properties as unknown as Record<string, unknown>)[id] ?? ''))
+            .filter(Boolean),
         ),
-      ].sort()
+      ]
+      if (id === 'age_years') {
+        unique.sort((a, b) => Number(a) - Number(b))
+        return {
+          id, label,
+          values: unique.map((value, i) => ({
+            value,
+            label: `${value} yr${Number(value) !== 1 ? 's' : ''}`,
+            color: PALETTE[i % PALETTE.length],
+          })),
+        }
+      }
+      unique.sort()
       return {
         id,
         label,
@@ -66,7 +92,7 @@ export default function Phase1({ collapsed, onCollapse, bothVisible }: Phase1Pro
         })),
       }
     })
-  }, [data])
+  }, [processedData])
 
   // Radio toggle: activate the clicked field, or deactivate if already active
   const handleColorFieldChange = (field: string) => {
@@ -85,7 +111,7 @@ export default function Phase1({ collapsed, onCollapse, bothVisible }: Phase1Pro
       borderRight
       isLoading={isLoading}
       isError={isError}
-      geoJsonData={data ?? null}
+      geoJsonData={processedData}
       layerGroups={layerGroups}
       colorField={colorField}
       onColorFieldChange={handleColorFieldChange}

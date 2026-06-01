@@ -103,11 +103,20 @@ function MapController({
 }) {
   const map = useMap()
 
-  // Fit bounds once when data first loads
   useEffect(() => {
     if (!data?.features.length) return
-    const bounds = L.geoJSON(data as unknown as Parameters<typeof L.geoJSON>[0]).getBounds()
-    if (bounds.isValid()) map.fitBounds(bounds, { padding: [5, 5] })
+    const fit = () => {
+      map.invalidateSize()
+      const bounds = L.geoJSON(data as unknown as Parameters<typeof L.geoJSON>[0]).getBounds()
+      if (bounds.isValid()) map.fitBounds(bounds, { padding: [5, 5] })
+    }
+    // whenReady fires after Leaflet has measured the container — handles both
+    // fresh mounts and navigating back when data is already in the query cache.
+    if (map.getContainer().clientWidth > 0) {
+      fit()
+    } else {
+      map.whenReady(fit)
+    }
   }, [data, map])
 
   // Invalidate size after panel resize — rAF ensures the browser has finished

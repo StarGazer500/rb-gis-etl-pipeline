@@ -48,9 +48,8 @@ export default function Phase2({ collapsed, onCollapse, bothVisible }: Phase2Pro
       const unique = [
         ...new Set(
           data.features
-            .map(f => (f.properties as unknown as Record<string, unknown>)[id])
-            .filter((v): v is string | number => v != null)
-            .map(String),
+            .map(f => String((f.properties as unknown as Record<string, unknown>)[id] ?? ''))
+            .filter(Boolean),
         ),
       ].sort()
       return {

@@ -90,6 +90,7 @@ interface NavSection {
   title: string
   icon: React.ReactNode
   items: NavItem[]
+  path?: string
 }
 
 const MapIcon = () => (
@@ -97,6 +98,14 @@ const MapIcon = () => (
     <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
     <line x1="8" y1="2" x2="8" y2="18" />
     <line x1="16" y1="6" x2="16" y2="22" />
+  </svg>
+)
+
+const SeedlingIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 22V12" />
+    <path d="M12 12C12 12 7 10 5 6c3 0 7 2 7 6z" />
+    <path d="M12 12C12 12 17 10 19 6c-3 0-7 2-7 6z" />
   </svg>
 )
 
@@ -128,6 +137,12 @@ const sections: NavSection[] = [
     title: 'Project Overview',
     icon: <MapIcon />,
     items: [],
+  },
+  {
+    title: 'Current Year Planting',
+    icon: <SeedlingIcon />,
+    items: [],
+    path: '/current-year-planting',
   },
 //   {
 //     title: 'Data Management',
@@ -161,9 +176,14 @@ export default function SideBar() {
 
   const isProjectOverview = pathname === `/${currentId}` || pathname === `/${currentId}/`
 
+  const isSectionActive = (section: NavSection) => {
+    if (section.path) return pathname === `/${currentId}${section.path}`
+    return section.title === 'Project Overview' && isProjectOverview
+  }
+
   const handleSectionClick = (section: NavSection) => {
     if (section.items.length === 0) {
-      navigate({ to: `/${currentId}` })
+      navigate({ to: section.path ? `/${currentId}${section.path}` : `/${currentId}` })
     } else {
       setOpenSections((prev) => ({ ...prev, [section.title]: !prev[section.title] }))
     }
@@ -174,7 +194,7 @@ export default function SideBar() {
       className={`
         bg-[#1a3a0a] flex flex-col border-r border-[#2d5a18] shrink-0 z-10
         transition-all duration-300 overflow-hidden
-        ${collapsed ? 'w-12' : 'w-52'}
+        ${collapsed ? 'w-12' : 'w-64'}
       `}
     >
       <ProjectSwitcher collapsed={collapsed} />
@@ -182,7 +202,7 @@ export default function SideBar() {
       {/* Nav sections */}
       <nav className="flex-1 overflow-y-auto py-3 overflow-x-hidden">
         {sections.map((section) => {
-          const isActive = section.title === 'Project Overview' && isProjectOverview
+          const isActive = isSectionActive(section)
           return (
             <div key={section.title} className="mb-1">
               {/* Section header */}
@@ -199,7 +219,7 @@ export default function SideBar() {
                 </span>
                 {!collapsed && (
                   <>
-                    <span className="flex-1 text-left text-xs font-semibold uppercase tracking-wider truncate">
+                    <span className="flex-1 text-left text-xs font-semibold uppercase tracking-wider leading-tight">
                       {section.title}
                     </span>
                     {section.items.length > 0 && (

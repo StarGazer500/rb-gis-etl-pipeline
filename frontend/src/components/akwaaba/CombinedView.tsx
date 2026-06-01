@@ -20,6 +20,8 @@ const PALETTE = [
   '#4ad96b', '#d9c84a', '#4a6cd9', '#d94a9a',
 ]
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 const VALUE_LABELS: Record<string, string> = { 'not planted': 'Planned' }
 function displayLabel(v: string) { return VALUE_LABELS[v.toLowerCase()] ?? v }
 
@@ -27,6 +29,12 @@ function buildColorMap(
   features: { properties: Record<string, unknown> }[],
   field: string,
 ): Record<string, string> {
+  if (field === 'age_years') {
+    const unique = [...new Set(
+      features.map(f => Number(f.properties[field])).filter(a => !isNaN(a) && a >= 0)
+    )].sort((a, b) => a - b)
+    return Object.fromEntries(unique.map((age, i) => [String(age), PALETTE[i % PALETTE.length]]))
+  }
   const unique = [
     ...new Set(features.map((f) => String(f.properties[field] ?? '')).filter(Boolean)),
   ].sort()
@@ -39,6 +47,7 @@ const P1_FIELDS = [
   { id: 'planting_status', label: 'Planting Status' },
   { id: 'planting_type',   label: 'Recipe' },
   { id: 'year_planted',    label: 'Planting Year' },
+  { id: 'age_years',       label: 'Age (planted)' },
 ]
 
 const P2_FIELDS = [
@@ -108,8 +117,12 @@ function MapFitter({ data }: { data: GeoJSONFeatureCollection | null }) {
   const map = useMap()
   useEffect(() => {
     if (!data?.features.length) return
-    const bounds = L.geoJSON(data as unknown as Parameters<typeof L.geoJSON>[0]).getBounds()
-    if (bounds.isValid()) map.fitBounds(bounds, { padding: [5, 5] })
+    const timer = setTimeout(() => {
+      map.invalidateSize()
+      const bounds = L.geoJSON(data as unknown as Parameters<typeof L.geoJSON>[0]).getBounds()
+      if (bounds.isValid()) map.fitBounds(bounds, { padding: [5, 5] })
+    }, 100)
+    return () => clearTimeout(timer)
   }, [data, map])
   return null
 }
@@ -141,12 +154,24 @@ export default function CombinedView() {
     'office-location': officeData  ?? null,
   }
 
+  const p1ProcessedData = useMemo(() => {
+    if (!p1Data) return null
+    return {
+      ...p1Data,
+      features: p1Data.features.map(f => {
+        const props = f.properties as unknown as Record<string, unknown>
+        const yr = Number(props.year_planted)
+        return { ...f, properties: { ...props, ...(yr > 0 ? { age_years: CURRENT_YEAR - yr } : {}) } }
+      }),
+    }
+  }, [p1Data])
+
   // Pre-build color maps for every classification field
   const p1ColorMaps = useMemo(() => {
-    if (!p1Data) return {} as Record<string, Record<string, string>>
-    const feats = p1Data.features.map((f) => ({ properties: f.properties as unknown as Record<string, unknown> }))
+    if (!p1ProcessedData) return {} as Record<string, Record<string, string>>
+    const feats = p1ProcessedData.features.map((f) => ({ properties: f.properties as unknown as Record<string, unknown> }))
     return Object.fromEntries(P1_FIELDS.map(({ id }) => [id, buildColorMap(feats, id)]))
-  }, [p1Data])
+  }, [p1ProcessedData])
 
   const p2ColorMaps = useMemo(() => {
     if (!p2Data) return {} as Record<string, Record<string, string>>
@@ -175,11 +200,11 @@ export default function CombinedView() {
           />
 
           {/* Phase 1 */}
-          {p1Visible && p1Data && (
+          {p1Visible && p1ProcessedData && (
             <GeoJSONLayer
               key={`p1-${p1ColorField || 'default'}`}
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              data={p1Data as any}
+              data={p1ProcessedData as any}
               style={(feature) => {
                 const props = (feature?.properties ?? {}) as Record<string, unknown>
                 if (!p1ColorField) {
@@ -273,7 +298,7 @@ export default function CombinedView() {
             )
           })}
 
-          <MapFitter data={(p1Data ?? null) as unknown as GeoJSONFeatureCollection | null} />
+          <MapFitter data={(p1ProcessedData ?? null) as unknown as GeoJSONFeatureCollection | null} />
         </MapContainer>
 
         {isLoading && (
@@ -328,7 +353,9 @@ export default function CombinedView() {
                               {Object.entries(colorMap).map(([val, color]) => (
                                 <div key={val} className="flex items-center gap-2">
                                   <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: color }} />
-                                  <span className="text-gray-500 text-xs truncate">{displayLabel(val) || '—'}</span>
+                                  <span className="text-gray-500 text-xs truncate">
+                                    {id === 'age_years' ? `${val} yr${Number(val) !== 1 ? 's' : ''}` : (displayLabel(val) || '—')}
+                                  </span>
                                 </div>
                               ))}
                             </div>

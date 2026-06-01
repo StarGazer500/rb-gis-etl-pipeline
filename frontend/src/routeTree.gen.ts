@@ -16,6 +16,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ColobusIndexRouteImport } from './routes/colobus/index'
 import { Route as BuffaloIndexRouteImport } from './routes/buffalo/index'
 import { Route as AkwaabaIndexRouteImport } from './routes/akwaaba/index'
+import { Route as ColobusCurrentYearPlantingRouteImport } from './routes/colobus/current-year-planting'
+import { Route as BuffaloCurrentYearPlantingRouteImport } from './routes/buffalo/current-year-planting'
+import { Route as AkwaabaCurrentYearPlantingRouteImport } from './routes/akwaaba/current-year-planting'
 
 const ColobusRouteRoute = ColobusRouteRouteImport.update({
   id: '/colobus',
@@ -52,18 +55,42 @@ const AkwaabaIndexRoute = AkwaabaIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AkwaabaRouteRoute,
 } as any)
+const ColobusCurrentYearPlantingRoute =
+  ColobusCurrentYearPlantingRouteImport.update({
+    id: '/current-year-planting',
+    path: '/current-year-planting',
+    getParentRoute: () => ColobusRouteRoute,
+  } as any)
+const BuffaloCurrentYearPlantingRoute =
+  BuffaloCurrentYearPlantingRouteImport.update({
+    id: '/current-year-planting',
+    path: '/current-year-planting',
+    getParentRoute: () => BuffaloRouteRoute,
+  } as any)
+const AkwaabaCurrentYearPlantingRoute =
+  AkwaabaCurrentYearPlantingRouteImport.update({
+    id: '/current-year-planting',
+    path: '/current-year-planting',
+    getParentRoute: () => AkwaabaRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/akwaaba': typeof AkwaabaRouteRouteWithChildren
   '/buffalo': typeof BuffaloRouteRouteWithChildren
   '/colobus': typeof ColobusRouteRouteWithChildren
+  '/akwaaba/current-year-planting': typeof AkwaabaCurrentYearPlantingRoute
+  '/buffalo/current-year-planting': typeof BuffaloCurrentYearPlantingRoute
+  '/colobus/current-year-planting': typeof ColobusCurrentYearPlantingRoute
   '/akwaaba/': typeof AkwaabaIndexRoute
   '/buffalo/': typeof BuffaloIndexRoute
   '/colobus/': typeof ColobusIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/akwaaba/current-year-planting': typeof AkwaabaCurrentYearPlantingRoute
+  '/buffalo/current-year-planting': typeof BuffaloCurrentYearPlantingRoute
+  '/colobus/current-year-planting': typeof ColobusCurrentYearPlantingRoute
   '/akwaaba': typeof AkwaabaIndexRoute
   '/buffalo': typeof BuffaloIndexRoute
   '/colobus': typeof ColobusIndexRoute
@@ -74,6 +101,9 @@ export interface FileRoutesById {
   '/akwaaba': typeof AkwaabaRouteRouteWithChildren
   '/buffalo': typeof BuffaloRouteRouteWithChildren
   '/colobus': typeof ColobusRouteRouteWithChildren
+  '/akwaaba/current-year-planting': typeof AkwaabaCurrentYearPlantingRoute
+  '/buffalo/current-year-planting': typeof BuffaloCurrentYearPlantingRoute
+  '/colobus/current-year-planting': typeof ColobusCurrentYearPlantingRoute
   '/akwaaba/': typeof AkwaabaIndexRoute
   '/buffalo/': typeof BuffaloIndexRoute
   '/colobus/': typeof ColobusIndexRoute
@@ -85,17 +115,30 @@ export interface FileRouteTypes {
     | '/akwaaba'
     | '/buffalo'
     | '/colobus'
+    | '/akwaaba/current-year-planting'
+    | '/buffalo/current-year-planting'
+    | '/colobus/current-year-planting'
     | '/akwaaba/'
     | '/buffalo/'
     | '/colobus/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/akwaaba' | '/buffalo' | '/colobus'
+  to:
+    | '/'
+    | '/akwaaba/current-year-planting'
+    | '/buffalo/current-year-planting'
+    | '/colobus/current-year-planting'
+    | '/akwaaba'
+    | '/buffalo'
+    | '/colobus'
   id:
     | '__root__'
     | '/'
     | '/akwaaba'
     | '/buffalo'
     | '/colobus'
+    | '/akwaaba/current-year-planting'
+    | '/buffalo/current-year-planting'
+    | '/colobus/current-year-planting'
     | '/akwaaba/'
     | '/buffalo/'
     | '/colobus/'
@@ -159,14 +202,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AkwaabaIndexRouteImport
       parentRoute: typeof AkwaabaRouteRoute
     }
+    '/colobus/current-year-planting': {
+      id: '/colobus/current-year-planting'
+      path: '/current-year-planting'
+      fullPath: '/colobus/current-year-planting'
+      preLoaderRoute: typeof ColobusCurrentYearPlantingRouteImport
+      parentRoute: typeof ColobusRouteRoute
+    }
+    '/buffalo/current-year-planting': {
+      id: '/buffalo/current-year-planting'
+      path: '/current-year-planting'
+      fullPath: '/buffalo/current-year-planting'
+      preLoaderRoute: typeof BuffaloCurrentYearPlantingRouteImport
+      parentRoute: typeof BuffaloRouteRoute
+    }
+    '/akwaaba/current-year-planting': {
+      id: '/akwaaba/current-year-planting'
+      path: '/current-year-planting'
+      fullPath: '/akwaaba/current-year-planting'
+      preLoaderRoute: typeof AkwaabaCurrentYearPlantingRouteImport
+      parentRoute: typeof AkwaabaRouteRoute
+    }
   }
 }
 
 interface AkwaabaRouteRouteChildren {
+  AkwaabaCurrentYearPlantingRoute: typeof AkwaabaCurrentYearPlantingRoute
   AkwaabaIndexRoute: typeof AkwaabaIndexRoute
 }
 
 const AkwaabaRouteRouteChildren: AkwaabaRouteRouteChildren = {
+  AkwaabaCurrentYearPlantingRoute: AkwaabaCurrentYearPlantingRoute,
   AkwaabaIndexRoute: AkwaabaIndexRoute,
 }
 
@@ -175,10 +241,12 @@ const AkwaabaRouteRouteWithChildren = AkwaabaRouteRoute._addFileChildren(
 )
 
 interface BuffaloRouteRouteChildren {
+  BuffaloCurrentYearPlantingRoute: typeof BuffaloCurrentYearPlantingRoute
   BuffaloIndexRoute: typeof BuffaloIndexRoute
 }
 
 const BuffaloRouteRouteChildren: BuffaloRouteRouteChildren = {
+  BuffaloCurrentYearPlantingRoute: BuffaloCurrentYearPlantingRoute,
   BuffaloIndexRoute: BuffaloIndexRoute,
 }
 
@@ -187,10 +255,12 @@ const BuffaloRouteRouteWithChildren = BuffaloRouteRoute._addFileChildren(
 )
 
 interface ColobusRouteRouteChildren {
+  ColobusCurrentYearPlantingRoute: typeof ColobusCurrentYearPlantingRoute
   ColobusIndexRoute: typeof ColobusIndexRoute
 }
 
 const ColobusRouteRouteChildren: ColobusRouteRouteChildren = {
+  ColobusCurrentYearPlantingRoute: ColobusCurrentYearPlantingRoute,
   ColobusIndexRoute: ColobusIndexRoute,
 }
 

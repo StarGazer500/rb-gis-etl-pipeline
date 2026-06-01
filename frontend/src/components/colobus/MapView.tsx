@@ -9,6 +9,8 @@ const PALETTE = [
   '#4ad96b', '#d9c84a', '#4a6cd9', '#d94a9a',
 ]
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 const VALUE_LABELS: Record<string, string> = {
   'not planted': 'Planned',
 }
@@ -21,23 +23,47 @@ const FIELDS: Array<{ id: string; label: string }> = [
   { id: 'planting_status', label: 'Planting Status' },
   { id: 'planting_type',   label: 'Recipe' },
   { id: 'year_planted',    label: 'Planting Year' },
+  { id: 'age_years',       label: 'Age (planted)' },
 ]
 
 export default function ColobusMapView() {
   const { data, isLoading, isError } = useColobusSubcompartments()
   const [colorField, setColorField] = useState<string>('')
 
+  const processedData = useMemo(() => {
+    if (!data) return null
+    return {
+      ...data,
+      features: data.features.map(f => {
+        const props = f.properties as unknown as Record<string, unknown>
+        const yr = Number(props.year_planted)
+        return { ...f, properties: { ...props, ...(yr > 0 ? { age_years: CURRENT_YEAR - yr } : {}) } }
+      }),
+    }
+  }, [data])
+
   const layerGroups = useMemo<LayerGroup[]>(() => {
-    if (!data) return []
+    if (!processedData) return []
     return FIELDS.map(({ id, label }) => {
       const unique = [
         ...new Set(
-          data.features
-            .map(f => (f.properties as unknown as Record<string, unknown>)[id])
-            .filter((v): v is string | number => v != null)
-            .map(String),
+          processedData.features
+            .map(f => String((f.properties as unknown as Record<string, unknown>)[id] ?? ''))
+            .filter(Boolean),
         ),
-      ].sort()
+      ]
+      if (id === 'age_years') {
+        unique.sort((a, b) => Number(a) - Number(b))
+        return {
+          id, label,
+          values: unique.map((value, i) => ({
+            value,
+            label: `${value} yr${Number(value) !== 1 ? 's' : ''}`,
+            color: PALETTE[i % PALETTE.length],
+          })),
+        }
+      }
+      unique.sort()
       return {
         id,
         label,
@@ -48,7 +74,7 @@ export default function ColobusMapView() {
         })),
       }
     })
-  }, [data])
+  }, [processedData])
 
   return (
     <MapPanel
@@ -61,7 +87,7 @@ export default function ColobusMapView() {
       showCollapse={false}
       isLoading={isLoading}
       isError={isError}
-      geoJsonData={data ?? null}
+      geoJsonData={processedData}
       layerGroups={layerGroups}
       colorField={colorField}
       onColorFieldChange={(field) => setColorField(prev => prev === field ? '' : field)}
