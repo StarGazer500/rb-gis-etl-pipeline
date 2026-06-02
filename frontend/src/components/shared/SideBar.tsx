@@ -16,6 +16,7 @@ function ProjectSwitcher({ collapsed }: { collapsed: boolean }) {
 
   const currentId = pathname.split('/')[1] || 'akwaaba'
   const current = projects.find((p) => p.id === currentId) ?? projects[0]
+  const subPath = '/' + pathname.split('/').slice(2).filter(Boolean).join('/')
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -54,7 +55,7 @@ function ProjectSwitcher({ collapsed }: { collapsed: boolean }) {
             <button
               key={project.id}
               onClick={() => {
-                navigate({ to: `/${project.id}` })
+                navigate({ to: `/${project.id}${subPath === '/' ? '' : subPath}` })
                 setOpen(false)
               }}
               className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#2d5a18] transition-colors"
@@ -109,6 +110,15 @@ const SeedlingIcon = () => (
   </svg>
 )
 
+const LandIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <polygon points="3 11 12 2 21 11 21 21 3 21 3 11" />
+    <line x1="9" y1="21" x2="9" y2="12" />
+    <line x1="15" y1="21" x2="15" y2="12" />
+    <line x1="9" y1="12" x2="15" y2="12" />
+  </svg>
+)
+
 
 const SettingsIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -143,6 +153,12 @@ const sections: NavSection[] = [
     icon: <SeedlingIcon />,
     items: [],
     path: '/current-year-planting',
+  },
+  {
+    title: 'Leased Area Stratification',
+    icon: <LandIcon />,
+    items: [],
+    path: '/leased-area-stratification',
   },
 //   {
 //     title: 'Data Management',

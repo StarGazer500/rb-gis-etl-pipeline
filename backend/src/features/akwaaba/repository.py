@@ -3,6 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.features.akwaaba.dto import (
     GeoJSONGeometry,
+    LeaseAreaFeature,
+    LeaseAreaFeatureCollection,
+    LeaseAreaProperties,
     NurseryFenceFeature,
     NurseryFenceFeatureCollection,
     NurseryFenceProperties,
@@ -161,3 +164,25 @@ class AkwaabaRepository:
             for row in rows
         ]
         return RoadFeatureCollection(features=features)
+
+    async def get_lease_areas(self) -> LeaseAreaFeatureCollection:
+        sql = text("""
+            SELECT id, category, subcategory, area_ha, ST_AsGeoJSON(geom)::json AS geometry
+            FROM akwaaba_schema.lease_areas_stratum
+            ORDER BY id
+        """)
+        result = await self.session.execute(sql)
+        rows = result.mappings().all()
+        features = [
+            LeaseAreaFeature(
+                geometry=GeoJSONGeometry(**row["geometry"]) if row["geometry"] else None,
+                properties=LeaseAreaProperties(
+                    id=row["id"],
+                    category=row["category"],
+                    subcategory=row["subcategory"],
+                    area_ha=row["area_ha"],
+                ),
+            )
+            for row in rows
+        ]
+        return LeaseAreaFeatureCollection(features=features)

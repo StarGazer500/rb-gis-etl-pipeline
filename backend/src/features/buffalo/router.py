@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.database import get_db_session
 from src.features.buffalo.repository import BuffaloRepository
 from src.features.buffalo.service import BuffaloService
-from src.features.buffalo.dto import SubcompartmentFeatureCollection
+from src.features.buffalo.dto import LeaseAreaFeatureCollection, SubcompartmentFeatureCollection
 
 router = APIRouter(prefix="/api/buffalo", tags=["buffalo"])
 
@@ -16,3 +16,8 @@ def get_service(session: AsyncSession = Depends(get_db_session)) -> BuffaloServi
 @router.get("/layers/subcompartments", response_model=SubcompartmentFeatureCollection)
 async def get_subcompartments(service: BuffaloService = Depends(get_service)):
     return await service.get_subcompartments()
+
+
+@router.get("/layers/lease-areas", response_model=LeaseAreaFeatureCollection)
+async def get_lease_areas(service: BuffaloService = Depends(get_service)):
+    return await service.get_lease_areas()

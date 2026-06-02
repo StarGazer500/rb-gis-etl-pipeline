@@ -29,6 +29,26 @@ class SubcompartmentFeatureCollection(BaseModel):
     features: list[SubcompartmentFeature]
 
 
+# ── Lease Area Stratification ─────────────────────────────────────────────────
+
+class LeaseAreaProperties(BaseModel):
+    id: int
+    category: str | None
+    subcategory: str | None
+    area_ha: float | None
+
+
+class LeaseAreaFeature(BaseModel):
+    type: Literal["Feature"] = "Feature"
+    geometry: GeoJSONGeometry | None
+    properties: LeaseAreaProperties
+
+
+class LeaseAreaFeatureCollection(BaseModel):
+    type: Literal["FeatureCollection"] = "FeatureCollection"
+    features: list[LeaseAreaFeature]
+
+
 
 
 

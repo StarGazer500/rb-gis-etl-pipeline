@@ -31,3 +31,12 @@ async def cache_set(key: str, value: Any, ttl: int = 3600) -> None:
 async def cache_delete(key: str) -> None:
     """Explicitly evict a cache entry (e.g. after a data update)."""
     await _get_client().delete(key)
+
+
+async def cache_clear_pattern(pattern: str) -> int:
+    """Delete all keys matching *pattern* (e.g. 'akwaaba:*'). Returns count deleted."""
+    client = _get_client()
+    keys = await client.keys(pattern)
+    if not keys:
+        return 0
+    return await client.delete(*keys)

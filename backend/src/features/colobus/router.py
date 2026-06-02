@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.database import get_db_session
 from src.features.colobus.repository import ColobusRepository
 from src.features.colobus.service import ColobusService
-from src.features.colobus.dto import SubcompartmentFeatureCollection
+from src.features.colobus.dto import LeaseAreaFeatureCollection, SubcompartmentFeatureCollection
 
 router = APIRouter(prefix="/api/colobus", tags=["colobus"])
 
@@ -16,3 +16,8 @@ def get_service(session: AsyncSession = Depends(get_db_session)) -> ColobusServi
 @router.get("/layers/subcompartments", response_model=SubcompartmentFeatureCollection)
 async def get_subcompartments(service: ColobusService = Depends(get_service)):
     return await service.get_subcompartments()
+
+
+@router.get("/layers/lease-areas", response_model=LeaseAreaFeatureCollection)
+async def get_lease_areas(service: ColobusService = Depends(get_service)):
+    return await service.get_lease_areas()

@@ -122,3 +122,15 @@ export function usePrimaryRoads() {
     staleTime: 5 * 60 * 1000,
   })
 }
+
+// ── Lease Area Stratification ─────────────────────────────────────────────────
+
+export type LeaseAreaFC = GeoFC<{ id: number; category: string | null; subcategory: string | null; area_ha: number | null }>
+
+export function useAkwaabaLeaseAreas() {
+  return useQuery({
+    queryKey: ['akwaaba', 'lease-areas'],
+    queryFn: () => fetchLayer<LeaseAreaFC>('/api/akwaaba/layers/lease-areas'),
+    staleTime: 5 * 60 * 1000,
+  })
+}

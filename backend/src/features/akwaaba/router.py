@@ -5,6 +5,7 @@ from src.core.database import get_db_session
 from src.features.akwaaba.repository import AkwaabaRepository
 from src.features.akwaaba.service import AkwaabaService
 from src.features.akwaaba.dto import (
+    LeaseAreaFeatureCollection,
     NurseryFenceFeatureCollection,
     Phase2FeatureCollection,
     RoadFeatureCollection,
@@ -47,3 +48,8 @@ async def get_office_location(service: AkwaabaService = Depends(get_service)):
 @router.get("/layers/primary-roads", response_model=RoadFeatureCollection)
 async def get_primary_roads(service: AkwaabaService = Depends(get_service)):
     return await service.get_primary_roads()
+
+
+@router.get("/layers/lease-areas", response_model=LeaseAreaFeatureCollection)
+async def get_lease_areas(service: AkwaabaService = Depends(get_service)):
+    return await service.get_lease_areas()

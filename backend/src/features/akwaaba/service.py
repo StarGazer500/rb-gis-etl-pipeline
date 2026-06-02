@@ -1,6 +1,7 @@
 from src.core.cache import cache_get, cache_set
 from src.features.akwaaba.repository import AkwaabaRepository
 from src.features.akwaaba.dto import (
+    LeaseAreaFeatureCollection,
     NurseryFenceFeatureCollection,
     Phase2FeatureCollection,
     RoadFeatureCollection,
@@ -66,5 +67,14 @@ class AkwaabaService:
         if cached is not None:
             return RoadFeatureCollection.model_validate(cached)
         result = await self.repository.get_primary_roads()
+        await cache_set(key, result.model_dump(), ttl=_CACHE_TTL)
+        return result
+
+    async def get_lease_areas(self) -> LeaseAreaFeatureCollection:
+        key = "akwaaba:lease_areas"
+        cached = await cache_get(key)
+        if cached is not None:
+            return LeaseAreaFeatureCollection.model_validate(cached)
+        result = await self.repository.get_lease_areas()
         await cache_set(key, result.model_dump(), ttl=_CACHE_TTL)
         return result

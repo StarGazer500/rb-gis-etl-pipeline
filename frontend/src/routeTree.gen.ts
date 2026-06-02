@@ -16,8 +16,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ColobusIndexRouteImport } from './routes/colobus/index'
 import { Route as BuffaloIndexRouteImport } from './routes/buffalo/index'
 import { Route as AkwaabaIndexRouteImport } from './routes/akwaaba/index'
+import { Route as ColobusLeasedAreaStratificationRouteImport } from './routes/colobus/leased-area-stratification'
 import { Route as ColobusCurrentYearPlantingRouteImport } from './routes/colobus/current-year-planting'
+import { Route as BuffaloLeasedAreaStratificationRouteImport } from './routes/buffalo/leased-area-stratification'
 import { Route as BuffaloCurrentYearPlantingRouteImport } from './routes/buffalo/current-year-planting'
+import { Route as AkwaabaLeasedAreaStratificationRouteImport } from './routes/akwaaba/leased-area-stratification'
 import { Route as AkwaabaCurrentYearPlantingRouteImport } from './routes/akwaaba/current-year-planting'
 
 const ColobusRouteRoute = ColobusRouteRouteImport.update({
@@ -55,17 +58,35 @@ const AkwaabaIndexRoute = AkwaabaIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AkwaabaRouteRoute,
 } as any)
+const ColobusLeasedAreaStratificationRoute =
+  ColobusLeasedAreaStratificationRouteImport.update({
+    id: '/leased-area-stratification',
+    path: '/leased-area-stratification',
+    getParentRoute: () => ColobusRouteRoute,
+  } as any)
 const ColobusCurrentYearPlantingRoute =
   ColobusCurrentYearPlantingRouteImport.update({
     id: '/current-year-planting',
     path: '/current-year-planting',
     getParentRoute: () => ColobusRouteRoute,
   } as any)
+const BuffaloLeasedAreaStratificationRoute =
+  BuffaloLeasedAreaStratificationRouteImport.update({
+    id: '/leased-area-stratification',
+    path: '/leased-area-stratification',
+    getParentRoute: () => BuffaloRouteRoute,
+  } as any)
 const BuffaloCurrentYearPlantingRoute =
   BuffaloCurrentYearPlantingRouteImport.update({
     id: '/current-year-planting',
     path: '/current-year-planting',
     getParentRoute: () => BuffaloRouteRoute,
+  } as any)
+const AkwaabaLeasedAreaStratificationRoute =
+  AkwaabaLeasedAreaStratificationRouteImport.update({
+    id: '/leased-area-stratification',
+    path: '/leased-area-stratification',
+    getParentRoute: () => AkwaabaRouteRoute,
   } as any)
 const AkwaabaCurrentYearPlantingRoute =
   AkwaabaCurrentYearPlantingRouteImport.update({
@@ -80,8 +101,11 @@ export interface FileRoutesByFullPath {
   '/buffalo': typeof BuffaloRouteRouteWithChildren
   '/colobus': typeof ColobusRouteRouteWithChildren
   '/akwaaba/current-year-planting': typeof AkwaabaCurrentYearPlantingRoute
+  '/akwaaba/leased-area-stratification': typeof AkwaabaLeasedAreaStratificationRoute
   '/buffalo/current-year-planting': typeof BuffaloCurrentYearPlantingRoute
+  '/buffalo/leased-area-stratification': typeof BuffaloLeasedAreaStratificationRoute
   '/colobus/current-year-planting': typeof ColobusCurrentYearPlantingRoute
+  '/colobus/leased-area-stratification': typeof ColobusLeasedAreaStratificationRoute
   '/akwaaba/': typeof AkwaabaIndexRoute
   '/buffalo/': typeof BuffaloIndexRoute
   '/colobus/': typeof ColobusIndexRoute
@@ -89,8 +113,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/akwaaba/current-year-planting': typeof AkwaabaCurrentYearPlantingRoute
+  '/akwaaba/leased-area-stratification': typeof AkwaabaLeasedAreaStratificationRoute
   '/buffalo/current-year-planting': typeof BuffaloCurrentYearPlantingRoute
+  '/buffalo/leased-area-stratification': typeof BuffaloLeasedAreaStratificationRoute
   '/colobus/current-year-planting': typeof ColobusCurrentYearPlantingRoute
+  '/colobus/leased-area-stratification': typeof ColobusLeasedAreaStratificationRoute
   '/akwaaba': typeof AkwaabaIndexRoute
   '/buffalo': typeof BuffaloIndexRoute
   '/colobus': typeof ColobusIndexRoute
@@ -102,8 +129,11 @@ export interface FileRoutesById {
   '/buffalo': typeof BuffaloRouteRouteWithChildren
   '/colobus': typeof ColobusRouteRouteWithChildren
   '/akwaaba/current-year-planting': typeof AkwaabaCurrentYearPlantingRoute
+  '/akwaaba/leased-area-stratification': typeof AkwaabaLeasedAreaStratificationRoute
   '/buffalo/current-year-planting': typeof BuffaloCurrentYearPlantingRoute
+  '/buffalo/leased-area-stratification': typeof BuffaloLeasedAreaStratificationRoute
   '/colobus/current-year-planting': typeof ColobusCurrentYearPlantingRoute
+  '/colobus/leased-area-stratification': typeof ColobusLeasedAreaStratificationRoute
   '/akwaaba/': typeof AkwaabaIndexRoute
   '/buffalo/': typeof BuffaloIndexRoute
   '/colobus/': typeof ColobusIndexRoute
@@ -116,8 +146,11 @@ export interface FileRouteTypes {
     | '/buffalo'
     | '/colobus'
     | '/akwaaba/current-year-planting'
+    | '/akwaaba/leased-area-stratification'
     | '/buffalo/current-year-planting'
+    | '/buffalo/leased-area-stratification'
     | '/colobus/current-year-planting'
+    | '/colobus/leased-area-stratification'
     | '/akwaaba/'
     | '/buffalo/'
     | '/colobus/'
@@ -125,8 +158,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/akwaaba/current-year-planting'
+    | '/akwaaba/leased-area-stratification'
     | '/buffalo/current-year-planting'
+    | '/buffalo/leased-area-stratification'
     | '/colobus/current-year-planting'
+    | '/colobus/leased-area-stratification'
     | '/akwaaba'
     | '/buffalo'
     | '/colobus'
@@ -137,8 +173,11 @@ export interface FileRouteTypes {
     | '/buffalo'
     | '/colobus'
     | '/akwaaba/current-year-planting'
+    | '/akwaaba/leased-area-stratification'
     | '/buffalo/current-year-planting'
+    | '/buffalo/leased-area-stratification'
     | '/colobus/current-year-planting'
+    | '/colobus/leased-area-stratification'
     | '/akwaaba/'
     | '/buffalo/'
     | '/colobus/'
@@ -202,6 +241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AkwaabaIndexRouteImport
       parentRoute: typeof AkwaabaRouteRoute
     }
+    '/colobus/leased-area-stratification': {
+      id: '/colobus/leased-area-stratification'
+      path: '/leased-area-stratification'
+      fullPath: '/colobus/leased-area-stratification'
+      preLoaderRoute: typeof ColobusLeasedAreaStratificationRouteImport
+      parentRoute: typeof ColobusRouteRoute
+    }
     '/colobus/current-year-planting': {
       id: '/colobus/current-year-planting'
       path: '/current-year-planting'
@@ -209,12 +255,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ColobusCurrentYearPlantingRouteImport
       parentRoute: typeof ColobusRouteRoute
     }
+    '/buffalo/leased-area-stratification': {
+      id: '/buffalo/leased-area-stratification'
+      path: '/leased-area-stratification'
+      fullPath: '/buffalo/leased-area-stratification'
+      preLoaderRoute: typeof BuffaloLeasedAreaStratificationRouteImport
+      parentRoute: typeof BuffaloRouteRoute
+    }
     '/buffalo/current-year-planting': {
       id: '/buffalo/current-year-planting'
       path: '/current-year-planting'
       fullPath: '/buffalo/current-year-planting'
       preLoaderRoute: typeof BuffaloCurrentYearPlantingRouteImport
       parentRoute: typeof BuffaloRouteRoute
+    }
+    '/akwaaba/leased-area-stratification': {
+      id: '/akwaaba/leased-area-stratification'
+      path: '/leased-area-stratification'
+      fullPath: '/akwaaba/leased-area-stratification'
+      preLoaderRoute: typeof AkwaabaLeasedAreaStratificationRouteImport
+      parentRoute: typeof AkwaabaRouteRoute
     }
     '/akwaaba/current-year-planting': {
       id: '/akwaaba/current-year-planting'
@@ -228,11 +288,13 @@ declare module '@tanstack/react-router' {
 
 interface AkwaabaRouteRouteChildren {
   AkwaabaCurrentYearPlantingRoute: typeof AkwaabaCurrentYearPlantingRoute
+  AkwaabaLeasedAreaStratificationRoute: typeof AkwaabaLeasedAreaStratificationRoute
   AkwaabaIndexRoute: typeof AkwaabaIndexRoute
 }
 
 const AkwaabaRouteRouteChildren: AkwaabaRouteRouteChildren = {
   AkwaabaCurrentYearPlantingRoute: AkwaabaCurrentYearPlantingRoute,
+  AkwaabaLeasedAreaStratificationRoute: AkwaabaLeasedAreaStratificationRoute,
   AkwaabaIndexRoute: AkwaabaIndexRoute,
 }
 
@@ -242,11 +304,13 @@ const AkwaabaRouteRouteWithChildren = AkwaabaRouteRoute._addFileChildren(
 
 interface BuffaloRouteRouteChildren {
   BuffaloCurrentYearPlantingRoute: typeof BuffaloCurrentYearPlantingRoute
+  BuffaloLeasedAreaStratificationRoute: typeof BuffaloLeasedAreaStratificationRoute
   BuffaloIndexRoute: typeof BuffaloIndexRoute
 }
 
 const BuffaloRouteRouteChildren: BuffaloRouteRouteChildren = {
   BuffaloCurrentYearPlantingRoute: BuffaloCurrentYearPlantingRoute,
+  BuffaloLeasedAreaStratificationRoute: BuffaloLeasedAreaStratificationRoute,
   BuffaloIndexRoute: BuffaloIndexRoute,
 }
 
@@ -256,11 +320,13 @@ const BuffaloRouteRouteWithChildren = BuffaloRouteRoute._addFileChildren(
 
 interface ColobusRouteRouteChildren {
   ColobusCurrentYearPlantingRoute: typeof ColobusCurrentYearPlantingRoute
+  ColobusLeasedAreaStratificationRoute: typeof ColobusLeasedAreaStratificationRoute
   ColobusIndexRoute: typeof ColobusIndexRoute
 }
 
 const ColobusRouteRouteChildren: ColobusRouteRouteChildren = {
   ColobusCurrentYearPlantingRoute: ColobusCurrentYearPlantingRoute,
+  ColobusLeasedAreaStratificationRoute: ColobusLeasedAreaStratificationRoute,
   ColobusIndexRoute: ColobusIndexRoute,
 }
 
