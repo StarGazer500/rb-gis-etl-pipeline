@@ -85,8 +85,8 @@ services:
         VITE_API_URL: ""
     expose:
       - "80"
-    depends_on:
-      - backend
+    # depends_on:
+    #   - backend
     restart: always
     networks:
       - app-network
