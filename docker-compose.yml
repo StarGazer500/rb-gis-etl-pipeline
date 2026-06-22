@@ -70,6 +70,7 @@ services:
       - .env
     environment:
       - TITILER_API_CORS_ORIGINS=http://localhost:3001
+      - TITILER_API_ROOT_PATH=/titiler
     command: uvicorn titiler.application.main:app --host 0.0.0.0 --port 8000
     restart: unless-stopped
     networks:
