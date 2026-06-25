@@ -62,7 +62,9 @@ services:
   #     - app-network
 
   titiler:
-    image: ghcr.io/developmentseed/titiler:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     platform: linux/amd64
     ports:
       - "8000:8000"
@@ -71,6 +73,7 @@ services:
     environment:
       - TITILER_API_CORS_ORIGINS=http://localhost:3001
       - TITILER_API_ROOT_PATH=/titiler
+      - AWS_DEFAULT_REGION=eu-north-1
     command: uvicorn titiler.application.main:app --host 0.0.0.0 --port 8000
     restart: unless-stopped
     networks:
